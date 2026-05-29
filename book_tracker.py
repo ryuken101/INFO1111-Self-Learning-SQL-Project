@@ -181,3 +181,68 @@ def demo_group_by_aggregate():
     for name, count, avg in rows:
         print(f"  {name}: {count} book(s), avg {avg:.2f} stars")
     print()
+
+def demo_constraint_enforcement():
+    """Try four invalid inserts to prove each schema constraint is enforced."""
+    print("Constraint enforcement checks:")
+ 
+    # 1) NOT NULL on books.title
+    try:
+        conn = get_connection()
+        conn.execute(
+            "INSERT INTO books (title, author_id, year_published, rating) "
+            "VALUES (?, ?, ?, ?);",
+            (None, 1, 2000, 4),
+        )
+        conn.commit()
+        print("  [FAIL] NOT NULL was not enforced for books.title")
+    except sqlite3.IntegrityError as e:
+        print(f"  [OK] NOT NULL on books.title rejected: {e}")
+    finally:
+        conn.close()
+ 
+    # 2) UNIQUE on authors.name (duplicate of a seeded row)
+    try:
+        conn = get_connection()
+        conn.execute(
+            "INSERT INTO authors (name, nationality) VALUES (?, ?);",
+            ("George Orwell", "British"),
+        )
+        conn.commit()
+        print("  [FAIL] UNIQUE was not enforced for authors.name")
+    except sqlite3.IntegrityError as e:
+        print(f"  [OK] UNIQUE on authors.name rejected: {e}")
+    finally:
+        conn.close()
+ 
+    # 3) FOREIGN KEY on books.author_id (no author with id 999 exists)
+    try:
+        conn = get_connection()
+        conn.execute(
+            "INSERT INTO books (title, author_id, year_published, rating) "
+            "VALUES (?, ?, ?, ?);",
+            ("Phantom Book", 999, 2020, 3),
+        )
+        conn.commit()
+        print("  [FAIL] FOREIGN KEY was not enforced for books.author_id")
+    except sqlite3.IntegrityError as e:
+        print(f"  [OK] FOREIGN KEY on books.author_id rejected: {e}")
+    finally:
+        conn.close()
+ 
+    # 4) CHECK on books.rating (rating must be between 1 and 5)
+    try:
+        conn = get_connection()
+        conn.execute(
+            "INSERT INTO books (title, author_id, year_published, rating) "
+            "VALUES (?, ?, ?, ?);",
+            ("Bad Rating Book", 1, 2020, 10),
+        )
+        conn.commit()
+        print("  [FAIL] CHECK was not enforced for books.rating")
+    except sqlite3.IntegrityError as e:
+        print(f"  [OK] CHECK on books.rating rejected: {e}")
+    finally:
+        conn.close()
+ 
+    print()
