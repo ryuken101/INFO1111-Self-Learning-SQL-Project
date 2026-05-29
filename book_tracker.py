@@ -81,3 +81,19 @@ def demo_update():
     conn.commit()
     conn.close()
     print("UPDATE: changed the rating of 'Animal Farm' to 5.")
+
+def demo_delete():
+    """Remove a book by title."""
+    conn = get_connection()
+    cur = conn.cursor()
+ 
+    # ---- SQL FEATURE: DELETE (with WHERE) ----------------------------------
+    # Remove the book "If on a winter's night a traveler" from the library.
+    cur.execute(
+        "DELETE FROM books WHERE title = ?;",
+        ("If on a winter's night a traveler",),
+    )
+ 
+    conn.commit()
+    conn.close()
+    print("DELETE: removed 'If on a winter's night a traveler'.\n")
