@@ -246,3 +246,28 @@ def demo_constraint_enforcement():
         conn.close()
  
     print()
+
+def main():
+    print("=== Personal Book Tracker ===\n")
+ 
+    initialise_database()
+    seed_data()
+ 
+    # Mutating demos
+    demo_update()
+    demo_delete()
+ 
+    # Read demos
+    demo_select_where()
+    demo_inner_join()
+    demo_order_by()
+    demo_group_by_aggregate()
+ 
+    # Verify schema enforces its constraints
+    demo_constraint_enforcement()
+ 
+    print("Done.")
+ 
+ 
+if __name__ == "__main__":
+    main()
