@@ -97,3 +97,22 @@ def demo_delete():
     conn.commit()
     conn.close()
     print("DELETE: removed 'If on a winter's night a traveler'.\n")
+
+def demo_select_where():
+    """List every book that has the maximum rating."""
+    conn = get_connection()
+    cur = conn.cursor()
+ 
+    # ---- SQL FEATURE: SELECT ... WHERE -------------------------------------
+    # Find every book with a rating equal to 5.
+    cur.execute(
+        "SELECT title, rating FROM books WHERE rating = ?;",
+        (5,),
+    )
+    rows = cur.fetchall()
+ 
+    conn.close()
+    print("SELECT ... WHERE rating = 5:")
+    for title, rating in rows:
+        print(f"  {rating} stars - {title}")
+    print()
