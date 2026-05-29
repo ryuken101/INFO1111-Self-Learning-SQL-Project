@@ -5,7 +5,7 @@ DB_PATH = "books.db"
 SCHEMA_PATH = "schema.sql"
 
 
-# Setup Functions 
+# -------- Setup Functions --------
 
 def get_connection():
     """Open a SQLite connection with foreign-key enforcement turned ON."""
@@ -24,4 +24,45 @@ def initialise_database():
         conn.executescript(f.read())
     conn.commit()
     conn.close()
+
+# -------- SQL feature demonstrations --------
+# -------- Each function exercises one of the required SQL features. --------
+
+def seed_data():
+    """Populate authors and books with example rows."""
+    conn = get_connection()
+    cur = conn.cursor()
+ 
+    # ---- SQL FEATURE: INSERT (parameterised) -------------------------------
+    # Insert several authors. Using ? placeholders + a tuple of values means
+    # user input is passed as a parameter, not concatenated into the SQL.
+    authors = [
+        ("George Orwell",     "British"),
+        ("Ursula K. Le Guin", "American"),
+        ("Italo Calvino",     "Italian"),
+    ]
+    cur.executemany(
+        "INSERT INTO authors (name, nationality) VALUES (?, ?);",
+        authors,
+    )
+ 
+    # ---- SQL FEATURE: INSERT (parameterised) -------------------------------
+    # Insert books, referencing authors by their foreign-key id.
+    books = [
+        ("1984",                              1, 1949, 5),
+        ("Animal Farm",                       1, 1945, 4),
+        ("The Dispossessed",                  2, 1974, 5),
+        ("A Wizard of Earthsea",              2, 1968, 4),
+        ("Invisible Cities",                  3, 1972, 5),
+        ("If on a winter's night a traveler", 3, 1979, 3),
+    ]
+    cur.executemany(
+        "INSERT INTO books (title, author_id, year_published, rating) "
+        "VALUES (?, ?, ?, ?);",
+        books,
+    )
+ 
+    conn.commit()
+    conn.close()
+    print("Seeded 3 authors and 6 books.\n")
  
