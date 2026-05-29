@@ -116,3 +116,24 @@ def demo_select_where():
     for title, rating in rows:
         print(f"  {rating} stars - {title}")
     print()
+
+def demo_inner_join():
+    """Pair each book with the author who wrote it."""
+    conn = get_connection()
+    cur = conn.cursor()
+ 
+    # ---- SQL FEATURE: INNER JOIN -------------------------------------------
+    # Join books with authors so each row includes the author's name and
+    # nationality alongside the book title.
+    cur.execute("""
+        SELECT books.title, authors.name, authors.nationality
+        FROM   books
+        INNER JOIN authors ON books.author_id = authors.author_id;
+    """)
+    rows = cur.fetchall()
+ 
+    conn.close()
+    print("INNER JOIN books x authors:")
+    for title, name, nationality in rows:
+        print(f"  '{title}' by {name} ({nationality})")
+    print()
