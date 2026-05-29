@@ -137,3 +137,23 @@ def demo_inner_join():
     for title, name, nationality in rows:
         print(f"  '{title}' by {name} ({nationality})")
     print()
+
+def demo_order_by():
+    """List every book sorted by rating, then title."""
+    conn = get_connection()
+    cur = conn.cursor()
+ 
+    # ---- SQL FEATURE: ORDER BY ---------------------------------------------
+    # Sort books by rating (highest first), tie-breaking alphabetically.
+    cur.execute("""
+        SELECT title, rating
+        FROM   books
+        ORDER BY rating DESC, title ASC;
+    """)
+    rows = cur.fetchall()
+ 
+    conn.close()
+    print("ORDER BY rating DESC, title ASC:")
+    for title, rating in rows:
+        print(f"  {rating} stars - {title}")
+    print()
