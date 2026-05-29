@@ -65,4 +65,19 @@ def seed_data():
     conn.commit()
     conn.close()
     print("Seeded 3 authors and 6 books.\n")
+
+def demo_update():
+    """Bump the rating of one book."""
+    conn = get_connection()
+    cur = conn.cursor()
  
+    # ---- SQL FEATURE: UPDATE (with WHERE) ----------------------------------
+    # Change the rating of 'Animal Farm' from 4 to 5.
+    cur.execute(
+        "UPDATE books SET rating = ? WHERE title = ?;",
+        (5, "Animal Farm"),
+    )
+ 
+    conn.commit()
+    conn.close()
+    print("UPDATE: changed the rating of 'Animal Farm' to 5.")
