@@ -157,3 +157,27 @@ def demo_order_by():
     for title, rating in rows:
         print(f"  {rating} stars - {title}")
     print()
+
+def demo_group_by_aggregate():
+    """For each author, show how many books they have and their average rating."""
+    conn = get_connection()
+    cur = conn.cursor()
+ 
+    # ---- SQL FEATURE: GROUP BY with aggregates (COUNT, AVG) ----------------
+    # Group books by author and compute the count and average rating per author.
+    cur.execute("""
+        SELECT authors.name,
+               COUNT(books.book_id)  AS book_count,
+               AVG(books.rating)     AS avg_rating
+        FROM   authors
+        INNER JOIN books ON authors.author_id = books.author_id
+        GROUP BY authors.author_id, authors.name
+        ORDER BY avg_rating DESC;
+    """)
+    rows = cur.fetchall()
+ 
+    conn.close()
+    print("GROUP BY author (book count, average rating):")
+    for name, count, avg in rows:
+        print(f"  {name}: {count} book(s), avg {avg:.2f} stars")
+    print()
