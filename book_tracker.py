@@ -247,6 +247,7 @@ def demo_constraint_enforcement():
  
     print()
 
+# -------- Entry point --------
 def main():
     print("=== Personal Book Tracker ===\n")
  
